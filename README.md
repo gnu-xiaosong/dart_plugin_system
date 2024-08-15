@@ -318,9 +318,7 @@ abstract class PluginInsertPoint<T extends ConPluginType,
 }
 ```
 
-运行结果:
 
-![image-20240816074038362](project/pluginSystem/image-20240816074038362.png)
 
 ### 插件注入段代码示例
 
@@ -482,7 +480,7 @@ main() async {
 7. **得到脚本文件**：xxx.evc 或 xx.dart
 
 
-​
+
 
 
 
