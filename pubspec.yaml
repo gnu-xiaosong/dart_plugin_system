@@ -1,0 +1,16 @@
+name: dart_plugin_system
+description: A sample command-line application.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.2.3
+
+dependencies:
+  dart_eval: ^0.7.9
+  hive: ^2.2.3
+  path: ^1.9.0
+  uuid: ^4.4.2
+
+
+dev_dependencies:

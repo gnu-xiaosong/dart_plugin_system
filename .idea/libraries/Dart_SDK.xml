@@ -1,0 +1,29 @@
+<component name="libraryTable">
+  <library name="Dart SDK">
+    <CLASSES>
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/async" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/cli" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/collection" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/convert" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/core" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/developer" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/ffi" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/html" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/indexed_db" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/io" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/isolate" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/js" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/js_interop" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/js_interop_unsafe" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/js_util" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/math" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/mirrors" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/svg" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/typed_data" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/web_audio" />
+      <root url="file://E:/flutter/dart-sdk-3.5.0/lib/web_gl" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
