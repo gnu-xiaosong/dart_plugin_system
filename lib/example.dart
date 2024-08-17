@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:dart_plugin_system/pluginSystem/PluginManager.dart';
 import 'package:dart_plugin_system/pluginSystem/PluginType.dart';
+import 'package:dart_plugin_system/pluginSystem/dataModel/functionalityPluginDataModel.dart';
 import 'package:dart_plugin_system/pluginSystem/plugin/FunctionalityPlugin.dart';
 import 'package:dart_plugin_system/pluginSystem/pluginInsert/PluginCategory.dart';
 import 'package:hive/hive.dart';
+import 'package:uuid/uuid.dart';
 import 'pluginSystem/storeData/PluginModelAdapter.dart';
 import 'pluginSystem/storeData/ServerStoreDataPlugin.dart';
 
@@ -28,7 +30,7 @@ main() async {
       category: PluginCategory.Integration,
       evc: false,
       path:
-          "D:\\ProjectDevelopment\\plugin_system\\dart_plugin_system\\assets\\plugin\\test.dart",
+          "D:\\ProjectDevelopment\\plugin_system\\dart_plugin_system\\assets\\plugin\\pluginName_plugin.dart",
       name: "testPlugin");
 
   // 注册插件
@@ -54,7 +56,13 @@ main() async {
     pluginManager.pluginInjector // 获取注入器
       ..pluginType = PluginType.Functionality // 设置插件类型
       ..pluginCategory = PluginCategory.Integration // 设置插件类别
-      ..data = "石头"
+      ..data = FunctionalityPluginDataModel(
+          id: Uuid().v4(),
+          name: "测试数据",
+          payload: {"id": "test", "name": "hello word"})
+      ..callback = (str) {
+        print("回调处理: $str");
+      }
       ..run(); // 运行注入器
 
     // 步骤三: 成品

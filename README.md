@@ -352,7 +352,7 @@ main() async {
   FunctionalityPlugin functionalityPlugin = FunctionalityPlugin(
       category: PluginCategory.Integration,
       evc: false,
-      path:    "D:\\ProjectDevelopment\\plugin_system\\dart_plugin_system\\assets\\plugin\\test.dart",
+      path:    "D:\\ProjectDevelopment\\plugin_system\\dart_plugin_system\\assets\\plugin\\pluginName_plugin.dart",
       name: "testPlugin");
 
   // 注册插件
@@ -393,7 +393,9 @@ main() async {
   pluginManager.disposeAll();
 }
 ```
+运行结果:
 
+![image-20240816074038362](project/pluginSystem/image-20240816074038362.png)
 
 
 ### 具体插件实现开发文档
@@ -410,6 +412,8 @@ main() async {
 
 
 
+
+
 #### 开发须知
 
 ##### 插件运作流程说明
@@ -421,6 +425,12 @@ main() async {
 - 因为插件的运行时执行脚本归功于dart_eval, 因此建议先查阅dart_eval文档再进行插件的开发，以便少走弯路
 
   同理flutter插件拓展部分，请参见flutter_eval（基于dart_eval）文档
+  
+- 在使用`dart_eval bind`命令生成包装器类时，记得需要对其进行修改，将生成的包装器类中的包名替换为: `package:plugin_system/bridge.dart`
+
+  ![image-20240817215707220](project/README/image-20240817215707220.png) 
+
+  否则会报错: `not find 'package:dart_plugin_system/pluginSystem/dataModel/PluginDataModel.dart'`等错误,这是由于相关类没有映射到lib库中，因此找不到。
 
 #### 开发步骤
 

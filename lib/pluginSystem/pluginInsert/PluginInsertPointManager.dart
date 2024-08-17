@@ -16,6 +16,9 @@ class PluginInsertPointManager {
   // 输入注入器数据
   dynamic data;
 
+  // 回到函数
+  late Function callback;
+
   /*
    运行函数
    参数:
@@ -40,7 +43,9 @@ class PluginInsertPointManager {
         // 2.注入点模块初始化
         functionalityModulePluginInsertPoint.initial();
         // 3.调用对应的运行函数
-        outputData = functionalityModulePluginInsertPoint.run(data);
+        outputData = functionalityModulePluginInsertPoint
+          ..callback = callback // 回调函数
+          ..run(data);
         break;
       case PluginType.Integration:
         /*

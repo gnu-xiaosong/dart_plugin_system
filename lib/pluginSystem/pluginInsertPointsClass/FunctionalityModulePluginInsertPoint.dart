@@ -1,13 +1,15 @@
 /*
 功能拓展模块插件Functionality注入点类
  */
-
 import 'package:dart_eval/dart_eval.dart';
-import 'package:dart_eval/stdlib/core.dart';
+import 'package:dart_eval/dart_eval_bridge.dart';
 import '../Plugin.dart';
 import '../PluginManager.dart';
 import '../PluginType.dart';
 import '../common.dart';
+import '../dataModel/PluginDataModel.eval.dart';
+import '../dataModel/functionalityPluginDataModel.dart';
+import '../dataModel/functionalityPluginDataModel.eval.dart';
 import '../pluginInsert/PluginInsertPoint.dart';
 import '../pluginInsert/PluginInsertPointType.dart';
 
@@ -15,11 +17,26 @@ class FunctionalityModulePluginInsertPoint
     with PluginCommon
     implements PluginInsertPoint {
   late PluginManager pluginManager;
+  late dynamic outputData;
+  late Runtime runtime;
+
+  // 回调函数
+  late Function callback;
 
   FunctionalityModulePluginInsertPoint({
     ConPluginType? conPluginType,
-  })  : _pluginConnType = conPluginType ?? ConPluginType.series,
-        pluginManager = PluginManager();
+  }) {
+    _pluginConnType = conPluginType ?? ConPluginType.series;
+    pluginManager = PluginManager();
+    initialEval();
+  }
+
+  /*
+  初始化dart_eval的变量，及其桥接类的生命
+   */
+  initialEval() {
+    print("初始化eval环境配置");
+  }
 
   /*
   实现存在的Functionality模块插件列表
@@ -94,6 +111,7 @@ class FunctionalityModulePluginInsertPoint
   运行串联运行函数
    */
   dynamic runSeries(dynamic data) {
+    print("测试数据: $data.id");
     // 循环遍历执行脚本程序
     pluginAll.forEach((plugin) {
       print(
@@ -104,6 +122,7 @@ class FunctionalityModulePluginInsertPoint
       // 获取文件路径
       String path = plugin.path;
 
+      print("这里");
       // 调用执行脚本函数
       dynamic outData = execScript(evc: evc, path: path, data: data);
       print("outputData: $outData");
@@ -158,21 +177,71 @@ class FunctionalityModulePluginInsertPoint
     evc   是否为evc字节码文件
    */
   dynamic execScript(
-      {required String path, bool evc = false, required dynamic data}) {
+      {required String path,
+      bool evc = false,
+      required FunctionalityPluginDataModel data}) {
     print("start exec script........");
-    late dynamic outputData;
-    // 判定文件类型
-    if (evc) {
-      // evc文件
-      print("执行文件类型: evc");
-      outputData = "执行文件类型: evc";
-    } else {
-      print("执行文件类型: dart");
-      // dart文件
-      String? program = readFileContent(path);
+    // 创建一个编译器
+    final compiler = Compiler();
 
-      outputData = eval(program!, function: 'entry', args: [$String(data)]);
+    // 定义桥接类:供dart真实环境与Eval环境通过桥接类传递参数
+    compiler.defineBridgeClasses([
+      $FunctionalityPluginDataModel.$declaration,
+      $PluginDataModel.$declaration
+    ]);
+    /*
+    判定是否为evc字节码文件或dart源代码文件
+     */
+    switch (evc) {
+      case true:
+        // evc文件
+        print("执行文件类型: evc");
+        final bytecode = readFileBytes(path);
+        // 运行时
+        runtime = Runtime(bytecode);
+        break;
+      case false:
+        print("执行文件类型: dart");
+        // 1.读取源代码
+        final String source = readFileContent(path);
+        // print("source: $source");
+
+        // 2. 将源代码编译成包含元数据和字节码的程序。
+        final program = compiler.compile({
+          packetName: {'main.dart': source}
+        });
+
+        // 3.创建运行时
+        runtime = Runtime.ofProgram(program);
+        break;
     }
+
+    // 在运行时注册静态方法和构造函数: 以便在脚本中能使用到相关的自定义类，比如数据类DataModel
+    runtime.registerBridgeFunc('package:$packetName/bridge.dart',
+        'FunctionalityPluginDataModel.', $FunctionalityPluginDataModel.$new);
+    runtime.registerBridgeFunc('package:$packetName/bridge.dart',
+        'PluginDataModel.', $PluginDataModel.$new);
+
+    // print("----------前----------");
+    // 执行字节码并返回数据封装类
+    outputData = runtime.executeLib(
+        'package:$packetName/main.dart', // 包名
+        'entry', // 入口函数
+        [
+          // 传入的对象
+          $FunctionalityPluginDataModel.wrap(data),
+          // 回调函数
+          $Closure((runtime, target, args) {
+            // args传递过来的参数: 依次为args[0]、args[1].....
+            callback(args);
+            return null;
+          })
+        ] // 传入入口函数的参数
+        ).$value; // 获取实体数据对象
+
+    // print("----------后----------------");
+    //
+    // print("返回值: ${outputData.payload}");
 
     return outputData;
   }

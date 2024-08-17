@@ -89,6 +89,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.3"
+  eval_annotation:
+    dependency: "direct main"
+    description:
+      name: eval_annotation
+      sha256: "6c385cc57acbbaed784ae7e46b9700e17078aeafba1fbf41dfb68603669ae874"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.7.0"
   exception_templates:
     dependency: transitive
     description:
