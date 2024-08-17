@@ -4,6 +4,8 @@
 
 import 'dart:io';
 
+import 'package:dart_eval/dart_eval_bridge.dart';
+
 mixin PluginCommon {
   // 包名
   String packetName = "plugin_system";
@@ -46,4 +48,12 @@ mixin PluginCommon {
       print('File does not exist at the specified path: $path');
     }
   }
+
+  /*
+  从$Value中解构出Value值
+   valueList: $value列表
+   index  取出的列表index
+   */
+  dynamic getValueFrom$Value(List<$Value?> valueList, {int index = 0}) =>
+      valueList[index]?.$reified;
 }

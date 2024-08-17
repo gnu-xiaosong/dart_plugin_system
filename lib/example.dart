@@ -60,8 +60,21 @@ main() async {
           id: Uuid().v4(),
           name: "测试数据",
           payload: {"id": "test", "name": "hello word"})
-      ..callback = (str) {
-        print("回调处理: $str");
+      ..callback = (args) {
+        // args传递过来的参数: 依次为args[0]、args[1].....
+        // 需要使用工具函数getValueFrom$Value来结构出value值
+        final firstValue = pluginManager.getValueFrom$Value(args, index: 0);
+        print("回调处理: ${firstValue} - 第三方: ${Uuid().v4()}");
+      }
+      ..inputDataHandler = (data) {
+        // 数据输入插件系统处理回调函数: 不处理应返回原数据
+        print("输入数据处理");
+        return data;
+      }
+      ..outputDataHandler = (data) {
+        // 数据输出插件系统处理回调函数: 不处理应返回原数据
+        print("输出数据处理");
+        return data;
       }
       ..run(); // 运行注入器
 

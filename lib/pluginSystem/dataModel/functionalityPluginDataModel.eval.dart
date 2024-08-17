@@ -1,7 +1,7 @@
 import 'package:dart_eval/dart_eval.dart';
 import 'package:dart_eval/dart_eval_bridge.dart';
-import 'PluginDataModel.eval.dart';
 import 'functionalityPluginDataModel.dart';
+import 'package:dart_eval/stdlib/core.dart';
 
 /// dart_eval wrapper binding for [FunctionalityPluginDataModel]
 class $FunctionalityPluginDataModel implements $Instance {
@@ -24,8 +24,6 @@ class $FunctionalityPluginDataModel implements $Instance {
     BridgeClassType(
       $type,
       isAbstract: false,
-      $extends: BridgeTypeRef(BridgeTypeSpec(
-          'package:plugin_system/bridge.dart', 'PluginDataModel')),
     ),
     constructors: {
       '': BridgeConstructorDef(
@@ -53,10 +51,31 @@ class $FunctionalityPluginDataModel implements $Instance {
         isFactory: false,
       ),
     },
-    methods: {},
+    methods: {
+      'toMap': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map)),
+          namedParams: [],
+          params: [],
+        ),
+      ),
+    },
     getters: {},
     setters: {},
-    fields: {},
+    fields: {
+      'id': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+        isStatic: false,
+      ),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+        isStatic: false,
+      ),
+      'payload': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.map)),
+        isStatic: false,
+      ),
+    },
     wrap: true,
   );
 
@@ -78,14 +97,36 @@ class $FunctionalityPluginDataModel implements $Instance {
 
   /// Wrap a [FunctionalityPluginDataModel] in a [$FunctionalityPluginDataModel]
   $FunctionalityPluginDataModel.wrap(this.$value)
-      : _superclass = $PluginDataModel.wrap($value);
+      : _superclass = $Object($value);
 
   @override
   int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
 
   @override
   $Value? $getProperty(Runtime runtime, String identifier) {
+    switch (identifier) {
+      case 'id':
+        final _id = $value.id;
+        return $String(_id);
+
+      case 'name':
+        final _name = $value.name;
+        return $String(_name);
+
+      case 'payload':
+        final _payload = $value.payload;
+        return $Map.wrap(_payload);
+      case 'toMap':
+        return __toMap;
+    }
     return _superclass.$getProperty(runtime, identifier);
+  }
+
+  static const $Function __toMap = $Function(_toMap);
+  static $Value? _toMap(Runtime runtime, $Value? target, List<$Value?> args) {
+    final self = target as $FunctionalityPluginDataModel;
+    final result = self.$value.toMap();
+    return $Map.wrap(result);
   }
 
   @override

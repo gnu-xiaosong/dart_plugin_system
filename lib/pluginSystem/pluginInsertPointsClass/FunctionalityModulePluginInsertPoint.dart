@@ -7,7 +7,6 @@ import '../Plugin.dart';
 import '../PluginManager.dart';
 import '../PluginType.dart';
 import '../common.dart';
-import '../dataModel/PluginDataModel.eval.dart';
 import '../dataModel/functionalityPluginDataModel.dart';
 import '../dataModel/functionalityPluginDataModel.eval.dart';
 import '../pluginInsert/PluginInsertPoint.dart';
@@ -18,10 +17,11 @@ class FunctionalityModulePluginInsertPoint
     implements PluginInsertPoint {
   late PluginManager pluginManager;
   late dynamic outputData;
-  late Runtime runtime;
 
   // 回调函数
   late Function callback;
+  late Function userOutputDataHandler;
+  late Function userInputDataHandler1;
 
   FunctionalityModulePluginInsertPoint({
     ConPluginType? conPluginType,
@@ -181,14 +181,7 @@ class FunctionalityModulePluginInsertPoint
       bool evc = false,
       required FunctionalityPluginDataModel data}) {
     print("start exec script........");
-    // 创建一个编译器
-    final compiler = Compiler();
-
-    // 定义桥接类:供dart真实环境与Eval环境通过桥接类传递参数
-    compiler.defineBridgeClasses([
-      $FunctionalityPluginDataModel.$declaration,
-      $PluginDataModel.$declaration
-    ]);
+    late Runtime runtime;
     /*
     判定是否为evc字节码文件或dart源代码文件
      */
@@ -204,13 +197,8 @@ class FunctionalityModulePluginInsertPoint
         print("执行文件类型: dart");
         // 1.读取源代码
         final String source = readFileContent(path);
-        // print("source: $source");
-
-        // 2. 将源代码编译成包含元数据和字节码的程序。
-        final program = compiler.compile({
-          packetName: {'main.dart': source}
-        });
-
+        // 2.编译evc
+        final program = compileEvc(source);
         // 3.创建运行时
         runtime = Runtime.ofProgram(program);
         break;
@@ -219,53 +207,62 @@ class FunctionalityModulePluginInsertPoint
     // 在运行时注册静态方法和构造函数: 以便在脚本中能使用到相关的自定义类，比如数据类DataModel
     runtime.registerBridgeFunc('package:$packetName/bridge.dart',
         'FunctionalityPluginDataModel.', $FunctionalityPluginDataModel.$new);
-    runtime.registerBridgeFunc('package:$packetName/bridge.dart',
-        'PluginDataModel.', $PluginDataModel.$new);
 
-    // print("----------前----------");
     // 执行字节码并返回数据封装类
     outputData = runtime.executeLib(
         'package:$packetName/main.dart', // 包名
         'entry', // 入口函数
         [
-          // 传入的对象
+          // 传入的对象:数据体模型
           $FunctionalityPluginDataModel.wrap(data),
-          // 回调函数
+          // 回调函数:便于在dart中出力相关逻辑
           $Closure((runtime, target, args) {
             // args传递过来的参数: 依次为args[0]、args[1].....
             callback(args);
             return null;
           })
         ] // 传入入口函数的参数
-        ).$value; // 获取实体数据对象
-
-    // print("----------后----------------");
-    //
-    // print("返回值: ${outputData.payload}");
+        );
 
     return outputData;
   }
 
   /*
-  输入数据处理装饰函数
+  编译dart源代码为evc字节码
+   */
+  compileEvc(String source) {
+    // 创建一个编译器
+    final compiler = Compiler();
+
+    // 定义桥接类:供dart真实环境与Eval环境通过桥接类传递参数
+    compiler.defineBridgeClasses([$FunctionalityPluginDataModel.$declaration]);
+
+    // 2. 将源代码编译成包含元数据和字节码的程序。
+    final program = compiler.compile({
+      packetName: {'main.dart': source}
+    });
+
+    return program;
+  }
+
+  @override
+  initial() {
+    print("初始化FunctionalityModule");
+  }
+
+  /*
+   输入数据处理装饰函数
    */
   @override
-  dynamic inputDataHandler(dynamic data) {
-    print("inputDataHandler.........");
-    return data;
+  inputDataHandler(data) {
+    return userInputDataHandler1(data);
   }
 
   /*
   输出数据处理装饰函数
    */
   @override
-  dynamic outputDataHandler(dynamic data) {
-    print("outputDataHandler.........");
-    return data;
-  }
-
-  @override
-  initial() {
-    print("初始化FunctionalityModule");
+  outputDataHandler(data) {
+    return userOutputDataHandler(data);
   }
 }

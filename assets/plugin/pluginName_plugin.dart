@@ -28,13 +28,15 @@ import 'package:plugin_system/bridge.dart';
 /*
 插件的入口函数: 名称不能修改
  */
-entry(dynamic dataModel, Function? callback) {
+entry(dynamic dataModel, Function callback) {
   /// .................插件的业务实现............................
   /// 返回值说明：
   /// 如果没有返回值则请返回 null
   /// 否则请使用定义好的数据类模型进行封装再返回并且输入数据与输出数据模型类应当统一，以便插件的链式操作处理
-  print("In the eval environment input data: {$dataModel}");
 
+  // 使用数据体进行重新封装: 一定要重新封装
+  print("In the eval environment input data: ${dataModel.id}");
+  callback('我是从Eval环境中出力得到的');
   // 返回数据类型为数据封装体模型的包装类warp, 带$的, 例如: $FunctionalityPluginDataModel
   return dataModel ?? null;
 }

@@ -8,8 +8,6 @@
 
 - 示例
 
-  :
-
     - 浏览器插件（如广告拦截器、翻译工具）。
     - IDE插件（如代码格式化工具、调试工具）。
     - 文档编辑器插件（如拼写检查、模板管理）。
@@ -19,8 +17,6 @@
 - **描述**: 这些插件允许应用程序与其他服务或工具集成，通常用于数据同步或外部服务调用。
 
 - 示例
-
-  :
 
     - API集成插件（如支付网关、社交媒体分享）。
     - 数据库连接插件（如支持不同类型的数据库）。
@@ -32,8 +28,6 @@
 
 - 示例
 
-  :
-
     - 主题/皮肤插件（改变应用程序的外观）。
     - 自定义控件或小部件（如日历、图表）。
     - 动画效果插件。
@@ -43,8 +37,6 @@
 - **描述**: 这些插件专注于增强应用程序的安全性，通常用于防止攻击或保护用户数据。
 
 - 示例
-
-  :
 
     - 防火墙插件。
     - 安全扫描插件（如防止SQL注入、XSS攻击）。
@@ -56,8 +48,6 @@
 
 - 示例
 
-  :
-
     - 性能监控插件（如内存使用、CPU消耗）。
     - 日志记录插件（如错误日志、访问日志）。
     - 分析工具集成（如Google Analytics插件）。
@@ -67,8 +57,6 @@
 - **描述**: 这些插件用于管理应用程序中的内容，通常用于CMS（内容管理系统）中。
 
 - 示例
-
-  :
 
     - SEO插件（搜索引擎优化）。
     - 多语言支持插件。
@@ -80,8 +68,6 @@
 
 - 示例
 
-  :
-
     - 代码生成器插件。
     - 测试框架集成插件。
     - 持续集成插件。
@@ -91,8 +77,6 @@
 - **描述**: 这些插件用于自动化某些流程或任务，减少手动操作的需求。
 
 - 示例
-
-  :
 
     - 构建工具插件（如Gradle、Maven插件）。
     - 部署自动化插件。
@@ -104,8 +88,6 @@
 
 - 示例
 
-  :
-
     - 数据导入/导出插件（如CSV、JSON）。
     - 数据清理和转换插件。
     - 报告生成插件。
@@ -116,8 +98,6 @@
 
 - 示例
 
-  :
-
     - WebSocket插件。
     - 消息队列插件（如RabbitMQ、Kafka）。
     - 实时通信插件（如视频会议、聊天）。
@@ -126,7 +106,189 @@
 
 类似小程序独立运行的小型应用
 
+## 项目目录
+
+```markdown
+├─assets
+│  └─plugin     ----- 存放插件目录
+├─bin            ----- 命令入口设置
+├─lib
+│  ├─evc        ------ 用于存放生成的.evc文件
+│  ├─pluginSystem    ----- 插件系统核心目录
+│  │  ├─dataModel   -----  数据封装模型目录（用户可自定义)
+│  │  ├─genEvcFileScript   ----- 生成evc字节码文件脚本目录
+│  │  ├─plugin             ----  实现不同插件类型的插件类文件
+│  │  ├─pluginInsert	   ----  插件注入器核心类文件
+│  │  ├─pluginInsertPointsClass  ---- 不同插件类型对应的插件注入类文件
+│  │  └─storeData          ---- 有关存储的类实现文件
+│  └─scriptExample          ----  插件开发例子目录，里面展示了不同插件类型开发的例子
+├─project
+│  ├─pluginSystem
+│  └─README
+└─test                      ---- 测试目录
+```
+
+## 使用方法
+
+> 提示：插件系统集成与插件开发都是基于同一套代码进行的，因为他们是紧密联系捆绑的。
+
+#### 插件系统与项目集成(面向项目)
+
+* 下载源代码，建议选择最新版本
+
+* 在你的dart(或flutter项目)中**新建一个目录用于存放克隆下来的lib目录代码**
+
+* **安装相关依赖**: 
+
+  ```yaml
+  dependencies:
+    dart_eval: ^0.7.9
+    eval_annotation: ^0.7.0
+    hive: ^2.2.3
+    path: ^1.9.0
+    uuid: ^4.4.2
+  ```
+
+* 开始集成：easy use!
+
+  1. **初始化**: 注意尽量在启动应用时进行初始化，不要在使用插件系统时才进行初始化操作！
+
+     ```dart
+     // 初始化Hive，设置存储路径
+     Hive.init(directory);
+     // 注册调制器
+     Hive.registerAdapter(PluginModelAdapter());
+     ServerStoreDataPlugin().initialHiveParameter();
+     ```
+
+  2. **注册插件**并进行初始化
+
+     ```dart
+     // ************************前置操作：注册插件 and 初始化插件************************************
+     print("注册和初始化插件完成");
+     
+     // 实例化中间处理模块化插件 继承至Plugin类
+     FunctionalityPlugin functionalityPlugin = FunctionalityPlugin(
+         category: PluginCategory.Integration, // 插件的对应的类别，枚举类型，具体类别见
+         evc: true, // 是否为evc字节码
+         path:   "D:\\ProjectDevelopment\\plugin_system\\dart_plugin_system\\lib\\evc\\functionality_42b921c0-5cc0-11ef-8d0c-61bd3018da91_plugin.evc", // 插件脚本的文件地址，注意要求有访问权限
+         name: "插件名称" //插件名称
+     );
+     
+     // 注册插件
+     pluginManager.registerPlugin(functionalityPlugin);
+     
+     /*
+       插件初始化:
+       1.方式一：仅初始化该插件
+       2.方式二: 初始化所有已注册插件：包括方式1和2
+        */
+     functionalityPlugin.initial(); // 方式1 推荐
+     //pluginManager.initialAll(); // 方式2
+     ```
+
+  3. 使用**插件注入器注入**插件拓展位置
+
+     ```dart
+     pluginManager.pluginInjector // 获取注入器
+         ..pluginType = PluginType.Functionality // 设置插件类型
+         ..pluginCategory = PluginCategory.Integration // 设置插件类别
+         ..data = FunctionalityPluginDataModel() // 传入插件处理数据模型，用户可自定义
+         ..callback = (args) { // 回调处理函数
+              // args传递过来的参数: 依次为args[0]、args[1].....
+              // 需要使用工具函数getValueFrom$Value来结构出value值
+             final firstValue = pluginManager.getValueFrom$Value(args, index: 0);
+             print("回调处理: ${firstValue}");
+         }  
+         ..inputDataHandler = (data) {
+             // 数据输入插件系统处理回调函数: 不处理应返回原数据
+             print("输入数据处理");
+             return data;
+           }
+         ..outputDataHandler = (data) {
+             // 数据输出插件系统处理回调函数: 不处理应返回原数据
+             print("输出数据处理");
+             return data;
+           }
+     	..run(); // 运行插件
+     ```
+
+> **提示**：
+>
+> **集成难点解惑:** 因为集成的项目业务逻辑等大相径庭，因此很难统一封装一个数据实体模型用于dart环境与Eval环境进行数据模型交换，因此您可以根据你的项目自定义数据模型的类定义。
+>
+> 因此为了能方便能使插件系统与您的项目进行数据类型的转换衔接，因此您可能需要一个钩子让插件系统和您的项目无缝衔接的正常运行，您可能需要对进出插件系统的数据进行处理或转换，因此，系统专门留了两个钩子函数(input, output)以便您能处理数据转换的处理操作。
+>
+> ![image-20240818023755080](project/README/image-20240818023755080.png)
+
+#### 插件开发（面向插件端)
+
+> 开发插件所需知识：（对于做过flutter开发的，其实也很简单的，只需要了解一下dart_eval即可,很多功能模块都已经封装好了，就像写普通业务逻辑一样)
+>
+> - 熟悉dart基本语法，如果设计flutter，还需要掌握flutter框架
+> - 了解dart_eval，以及相关支持dart的语法或包，设计Ui还需要掌握了解flutter_eval的使用，尽量阅读一遍其基本原理。因为插件系统是基于dart_eval而进行开发的，因此务必请先了解掌握dart_eval的使用。
+> - 掌握插件系统的基本原理，以及基本约束概念： pluginType,pluginCategory等
+
+- 克隆该项目或下载其他版本
+- 安装相关依赖
+- 目录介绍
+
+![image-20240818050252248](project/README/image-20240818050252248.png)
+
+- 从入口函数entry()开始
+
+  ```dart
+  /*
+   * 名称: 插件开发入口
+   * 描述: 这是基于dart_eval的纯dart语言的插件开发系统，让开发者仅需掌握基本dart_eval使用规范和要求就能轻易集成到自己dart项目中
+   , 轻松完成code pull, 功能模块动态拓展等业务场景。后续会开发拓展到flutter项目中。
+   * 作者: xskj
+   * version: v1.0.0
+   * github: https://github.com/gnu-xiaosong
+   * 创建日期: 2024-08-16
+   * @parameters:
+       dataModel    dynamic    插件所需要处理的数据模型对象，可自定义，也可使用官方编写好的常用数据体封装模型
+       callback     FUnction   回调函数，主要用途为，方便扩展实现在Eval环境中不支持的功能业务场景，比如执行第三方拓展包的功能
+                               使用步骤:
+                               * 1. 在插件注入点定义callback回调函数理逻辑，以便编写插件时直接在Eval环境中调用即可。
+                               * 2. 在插件脚本[即本文件]中根据业务需求调用即可
+   * @return:
+       dataModel    dynamic/null   返回参数为输入参数数据封装模型类型，可为空[具体区别参见系统设计部分文档]
+   * 构建: 对于插件的构建方式有两种方式：
+            1. 源代码: 导入.dart的源代码文件, 运行时编译，不推荐, 速度慢，影响性能
+            2. evc字节码: 先将源代码编译成evc字节码，在dart运行时直接执行，推荐，速度较快，具体构建evc字节码参见文档构建evc部分，或者阅读dart_eval文档
+   * 其他说明: 为了方便开发者专注于业务场景的实现，本插件系统已实现了两种构建方式，具体使用参见【构建部分】，直接使用相关插件模版即可快速开发
+   * 注意: 在使用插件系统开发时,一定要注意插件的版本对应!!
+   * 调试：为了方便开发者熟悉插件的执行流程, 在xxx文件夹内有个xxx测试用例，供开发者调试
+   */
+  
+  // 导入Eval环境中会用到的相关类: 提示在ide中会报错，不用管
+  import 'package:plugin_system/bridge.dart';
+  
+  /*
+  插件的入口函数: 名称不能修改
+   */
+  entry(dynamic dataModel, Function callback) {
+    /// .................插件的业务实现............................
+    /// 返回值说明：
+    /// 如果没有返回值则请返回 null
+    /// 否则请使用定义好的数据类模型进行封装再返回并且输入数据与输出数据模型类应当统一，以便插件的链式操作处理
+  
+    // 使用数据体进行重新封装: 一定要重新封装
+    print("In the eval environment input data: ${dataModel.id}");
+    callback('我是从Eval环境中出力得到的');
+    // 返回数据类型为数据封装体模型的包装类warp, 带$的, 例如: $FunctionalityPluginDataModel
+    return dataModel ?? null;
+  }
+  ```
+
+> 提示: 如何您需要需要拓展Eval环境中的类，支持您通过自定义编写桥接或者包装器进行拓展，具体可见dart_eval官方文档使用，推荐使用给所需类加上@bind(),然后运行命令`dart_eval bind`自动生成。注意生成的包名需要进行替换，如下所示:
+>
+> ![image-20240818051005164](project/README/image-20240818051005164.png)
+
 ## 插件系统设计
+
+
 
 ![image-20240814000538731](project/pluginSystem/image-20240814000538731.png)
 
@@ -644,14 +806,33 @@ main() async {
 
 
 
+## 错误排查
+
+- 报错内容：在利用dart_eval的实验性性生成包装器时
+
+  ![image-20240818010504603](project/README/image-20240818010504603.png)
+
+  原因：继承类问题，方法：需as进行类型转化
+
+  ![image-20240818010712568](project/README/image-20240818010712568.png)
+
+  
+
+​		 
+
+​		
+
+​		
+
+
+
 
 
 ## 插件实现日志记录
 
 ### 1.**功能扩展类插件**
 
-- **2024.8.17**    修复核心bug，整理项目结构和文档修改， 提交版本v1.0.0  
-
+- **2024.8.17**    修复核心bug，整理项目结构和文档修改， 提交版本v1.0.0 
 
 
 

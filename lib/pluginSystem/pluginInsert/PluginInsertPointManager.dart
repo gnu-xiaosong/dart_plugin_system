@@ -18,6 +18,8 @@ class PluginInsertPointManager {
 
   // 回到函数
   late Function callback;
+  late Function outputDataHandler;
+  late Function inputDataHandler;
 
   /*
    运行函数
@@ -45,6 +47,8 @@ class PluginInsertPointManager {
         // 3.调用对应的运行函数
         outputData = functionalityModulePluginInsertPoint
           ..callback = callback // 回调函数
+          ..userInputDataHandler1 = inputDataHandler // 数据输入插件系统处理回调函数
+          ..userOutputDataHandler = outputDataHandler // 数据输出插件系统处理回调函数
           ..run(data);
         break;
       case PluginType.Integration:

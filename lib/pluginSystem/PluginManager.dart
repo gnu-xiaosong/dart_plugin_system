@@ -1,18 +1,14 @@
 /*
 插件管理器
 */
-import 'dart:io';
-
-import 'package:hive/hive.dart';
-
 import 'PluginType.dart';
+import 'common.dart';
 import 'pluginInsert/PluginInsertPointManager.dart';
 import './storeData/ServerStoreDataPlugin.dart';
 import 'Plugin.dart';
 import 'storeData/PluginModel.dart';
-import 'storeData/PluginModelAdapter.dart';
 
-class PluginManager extends ServerStoreDataPlugin {
+class PluginManager extends ServerStoreDataPlugin with PluginCommon {
   // 私有构造函数，确保无法从外部实例化该类
   PluginManager._privateConstructor();
   // 静态变量，保存类的唯一实例
