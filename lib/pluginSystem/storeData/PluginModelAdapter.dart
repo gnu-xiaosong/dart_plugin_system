@@ -10,10 +10,12 @@ class PluginModelAdapter extends TypeAdapter<PluginModel> {
     // 假设 PluginModel 有属性 id、name 和 version
     final name = reader.readString();
     final id = reader.readString();
-    final category = reader.readString();
+    final category = reader.readInt();
     final time = reader.readString();
     final path = reader.readString();
     final evc = reader.readBool();
+    final type = reader.readInt();
+    final status = reader.readBool();
 
     return PluginModel(
         name: name,
@@ -21,7 +23,9 @@ class PluginModelAdapter extends TypeAdapter<PluginModel> {
         category: category,
         path: path,
         evc: evc,
-        time: DateTime.parse(time));
+        time: DateTime.parse(time),
+        type: type,
+        status: status);
   }
 
   @override
@@ -29,12 +33,14 @@ class PluginModelAdapter extends TypeAdapter<PluginModel> {
     // 将 PluginModel 的属性写入二进制流
     writer.writeString(obj.name); // 将一个字符串写入二进制流
     writer.writeString(obj.id);
-    writer.writeString(obj.category);
+    writer.writeInt(obj.category);
     writer.writeString(obj.time.toString());
     writer.writeString(obj.path);
     writer.writeBool(obj.evc);
+    writer.writeInt(obj.type);
+    writer.writeBool(obj.status);
   }
 
   @override
-  int get typeId => 100;
+  int get typeId => 12;
 }

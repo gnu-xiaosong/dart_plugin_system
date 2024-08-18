@@ -1,33 +1,43 @@
 import 'package:hive/hive.dart';
+import '../common.dart';
 import 'PluginModel.dart';
 
-class ServerStoreDataPlugin {
-  late Box<PluginModel> plugins;
+class ServerStoreDataPlugin with PluginCommon {
+  static var box = Hive.box('plugin');
+  static var name = "pluginList";
 
   /*
    初始化所有参数值
    */
-  Future<void> initialHiveParameter() async {
-    // 创建一个Box: PluginSystemBox
-    plugins = await Hive.openBox<PluginModel>('PluginSystemBox');
+  static Future<void> initialize() async {
+    await Hive.openBox('plugin');
   }
 
   /*
   获取插件模型列表
    */
-  List<PluginModel> getPluginListInHive() {
-    return plugins.values.toList();
+  static List<PluginModel> getPluginListInHive() {
+    List commandInfoList = box.get(name, defaultValue: <Map>[]);
+    List<PluginModel> commandInfoListPluginModel = commandInfoList.map((json) {
+      return PluginModel.fromJson(json);
+    }).toList();
+    return commandInfoListPluginModel;
   }
 
   /*
   异步添加插件信息到列表
    */
-  Future<void> addPluginInfo(PluginModel pluginModel) async {
-    try {
-      await plugins.add(pluginModel);
-    } catch (e) {
-      print("Error adding plugin: $e");
-    }
+  Future<void> addPluginInfo(Map<String, dynamic> json) async {
+    // 取出
+    List pluginList = box.get(name, defaultValue: <Map>[]);
+
+    // 增加:剔除已存在的
+    pluginList.removeWhere(
+        (json1) => PluginModel.fromJson(json1) == PluginModel.fromJson(json));
+    // 增加
+    pluginList.add(json);
+    // 存储
+    box.put(name, pluginList);
   }
 
   /*
@@ -35,17 +45,21 @@ class ServerStoreDataPlugin {
   @parameter: id - 插件的唯一标识符
    */
   Future<void> deletePluginInfo(String id) async {
-    try {
-      final key = plugins.keys
-          .firstWhere((key) => plugins.get(key)?.id == id, orElse: () => null);
-      if (key != null) {
-        await plugins.delete(key);
-      } else {
-        print("Plugin with id $id not found");
-      }
-    } catch (e) {
-      print("Error deleting plugin: $e");
-    }
+    // 取出
+    List pluginList = box.get(name, defaultValue: <Map>[]);
+
+    // 增加:剔除已存在的
+    pluginList.removeWhere((json) => PluginModel.fromJson(json).id == id);
+
+    // 存储
+    box.put(name, pluginList);
+  }
+
+  /*
+  删除所有
+   */
+  clearPluginsInHive() {
+    box.clear();
   }
 
   /*
@@ -53,17 +67,22 @@ class ServerStoreDataPlugin {
   @parameter: id - 插件的唯一标识符
   @parameter: updatedPlugin - 更新后的插件模型
    */
-  Future<void> updatePluginInfo(String id, PluginModel updatedPlugin) async {
-    try {
-      final key = plugins.keys
-          .firstWhere((key) => plugins.get(key)?.id == id, orElse: () => null);
-      if (key != null) {
-        await plugins.put(key, updatedPlugin);
-      } else {
-        print("Plugin with id $id not found");
+  Future<void> updatePluginInfo(String id, Map<String, dynamic> json) async {
+    PluginModel updatedPlugin = PluginModel.fromJson(json);
+    // 取出
+    List pluginList = box.get(name, defaultValue: <Map>[]);
+
+    // 更新
+    pluginList = pluginList.map((json) {
+      PluginModel pluginModel = PluginModel.fromJson(json);
+      if (pluginModel.id == id) {
+        // 目标
+        return updatedPlugin.toJson();
       }
-    } catch (e) {
-      print("Error updating plugin: $e");
-    }
+      return json;
+    }).toList();
+
+    // 存储
+    box.put(name, pluginList);
   }
 }

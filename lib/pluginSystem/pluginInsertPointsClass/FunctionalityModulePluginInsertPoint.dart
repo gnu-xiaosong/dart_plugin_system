@@ -222,7 +222,7 @@ class FunctionalityModulePluginInsertPoint
             return null;
           })
         ] // 传入入口函数的参数
-        );
+        ).$reified; //不带$数据封装对象
 
     return outputData;
   }

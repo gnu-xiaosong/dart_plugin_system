@@ -6,7 +6,6 @@ import 'package:dart_plugin_system/pluginSystem/plugin/FunctionalityPlugin.dart'
 import 'package:dart_plugin_system/pluginSystem/pluginInsert/PluginCategory.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import 'pluginSystem/storeData/PluginModelAdapter.dart';
 import 'pluginSystem/storeData/ServerStoreDataPlugin.dart';
 
 main() async {
@@ -16,8 +15,9 @@ main() async {
   // 初始化Hive，设置存储路径
   Hive.init(directory);
   // 注册调制器
-  Hive.registerAdapter(PluginModelAdapter());
-  ServerStoreDataPlugin().initialHiveParameter();
+  // Hive.registerAdapter(PluginModelAdapter());
+  // 初始化持久化存储插件列表
+  await ServerStoreDataPlugin.initialize();
 
   // 实例化一个插件管理器实例单例对象
   PluginManager pluginManager = PluginManager();
@@ -42,7 +42,7 @@ main() async {
   2.方式二: 初始化所有已注册插件：包括方式1和2
    */
   functionalityPlugin.initial(); // 方式1 推荐
-  pluginManager.initialAll(); // 方式2
+  // pluginManager.initialAll(); // 方式2
 
   // 插件流程化测试
   {
@@ -84,6 +84,7 @@ main() async {
   }
 
   // *******************exit application***************************
+  print("存储的插件列表: ${ServerStoreDataPlugin.getPluginListInHive()}");
   print("释放插件成功");
   // 释放插件
   functionalityPlugin.dispose();

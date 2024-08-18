@@ -2,6 +2,7 @@
 插件类:抽象类接口
  */
 
+import 'package:dart_plugin_system/pluginSystem/storeData/PluginModel.dart';
 import 'PluginType.dart';
 import 'pluginInsert/PluginCategory.dart';
 
@@ -30,6 +31,9 @@ class Plugin {
 
   // 文件路径
   late String path;
+
+  // 插件数据存储模型
+  late PluginModel pluginModel;
 
   /*
   抽象实现接口1: 注册插件

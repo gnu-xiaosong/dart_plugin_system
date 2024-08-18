@@ -1,6 +1,6 @@
 # 插件系统开发文档
 
-## 插件归类介绍
+## 插件类型介绍
 
 ### 1.**功能扩展类插件**
 
@@ -154,15 +154,18 @@
   1. **初始化**: 注意尽量在启动应用时进行初始化，不要在使用插件系统时才进行初始化操作！
 
      ```dart
+     // 获取当前执行环境的路径：可自定义
+     final String directory = Directory.current.path;
      // 初始化Hive，设置存储路径
      Hive.init(directory);
      // 注册调制器
-     Hive.registerAdapter(PluginModelAdapter());
-     ServerStoreDataPlugin().initialHiveParameter();
+     // Hive.registerAdapter(PluginModelAdapter());
+     // 初始化持久化存储插件列表
+     await ServerStoreDataPlugin.initialize();
      ```
-
+  
   2. **注册插件**并进行初始化
-
+  
      ```dart
      // ************************前置操作：注册插件 and 初始化插件************************************
      print("注册和初始化插件完成");
@@ -186,9 +189,9 @@
      functionalityPlugin.initial(); // 方式1 推荐
      //pluginManager.initialAll(); // 方式2
      ```
-
+  
   3. 使用**插件注入器注入**插件拓展位置
-
+  
      ```dart
      pluginManager.pluginInjector // 获取注入器
          ..pluginType = PluginType.Functionality // 设置插件类型
