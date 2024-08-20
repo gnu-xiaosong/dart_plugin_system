@@ -114,6 +114,7 @@
 ├─bin            ----- 命令入口设置
 ├─lib
 │  ├─evc        ------ 用于存放生成的.evc文件
+│  ├─pluginPackage       ------ 插件包示例
 │  ├─pluginSystem    ----- 插件系统核心目录
 │  │  ├─dataModel   -----  数据封装模型目录（用户可自定义)
 │  │  ├─genEvcFileScript   ----- 生成evc字节码文件脚本目录
