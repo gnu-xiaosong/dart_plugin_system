@@ -1,0 +1,22 @@
+{
+  "name": "plugin name",
+  "version": "1.0.0",
+  "author": "xskj",
+  "description": "This is a sample plugin that provides basic functionality.",
+  "license": "MIT",
+  "homepage": "https://example.com/sample-plugin",
+  "repository": "https://github.com/example/sample-plugin",
+  "dependencies": {
+    "flutter": ">=2.0.0 <3.0.0",
+    "http": "^0.13.3"
+  },
+  "pluginType": "FunctionalityPlugin",
+  "pluginCategory": "pluginCategory",
+  "supportedPlatforms": ["android", "ios", "web"],
+  "lastUpdated": "2024-08-20T12:34:56Z",
+  "additionalInfo": {
+    "apiVersion": "2.1",
+    "minSdkVersion": 21,
+    "maxSdkVersion": 30
+  }
+}

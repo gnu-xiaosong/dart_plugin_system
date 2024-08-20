@@ -289,6 +289,46 @@
 >
 > ![image-20240818051005164](project/README/image-20240818051005164.png)
 
+##### 插件导入包示例（可自定义）
+
+> 目的：为了统一插件包标准，这里提供一个插件包示例
+
+* 包内容:
+
+  1. dart或evc脚本文件
+
+  2. 插件详情信息: info.json 具体字段如下
+
+     ```json
+     {
+       "name": "SamplePlugin",
+       "version": "1.0.0",
+       "author": "John Doe",
+       "description": "This is a sample plugin that provides basic functionality.",
+       "license": "MIT",
+       "homepage": "https://example.com/sample-plugin",
+       "repository": "https://github.com/example/sample-plugin",
+       "dependencies": {
+         "flutter": ">=2.0.0 <3.0.0",
+         "http": "^0.13.3"
+       },
+       "pluginType": "FunctionalityPlugin",
+       "supportedPlatforms": ["android", "ios", "web"],
+       "lastUpdated": "2024-08-20T12:34:56Z",
+       "additionalInfo": {
+         "apiVersion": "2.1",
+         "minSdkVersion": 21,
+         "maxSdkVersion": 30
+       }
+     }
+     ```
+
+* 打包格式: xxx.plugin   
+
+  具体操作方法：将两个文件先合一起打包成.zip文件，然后修改后缀为.plugin即可
+
+  获取则反向操作即可。
+
 ## 插件系统设计
 
 
@@ -829,6 +869,7 @@ main() async {
 
 - **2024.8.17**    修复核心bug，整理项目结构和文档修改， 提交版本v1.0.0 
 - **2024.8.18**    修复store本地存储，删除Hive调制器，将本地存储插件列表元素由自定义PluginModel修改为Map类型，相比于性能推荐使用Hive自定义对象,由于出现未知bug，为了暂时实现存储，暂时采用此方案，后期可能会进行性能优化后进行修复
+- 2024.8.20  添加插件导入包示例
 
 ### 2. **集成类插件**
 
