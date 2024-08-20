@@ -1,8 +1,8 @@
-import 'package:dart_plugin_system/pluginSystem/plugin/FunctionalityPlugin.dart';
-import 'package:dart_plugin_system/pluginSystem/pluginInsert/PluginCategory.dart';
 import 'PluginType.dart';
 import 'common.dart';
 import 'extensions/EnumExtension.dart';
+import 'plugin/FunctionalityPlugin.dart';
+import 'pluginInsert/PluginCategory.dart';
 import 'pluginInsert/PluginInsertPointManager.dart';
 import './storeData/ServerStoreDataPlugin.dart';
 import 'Plugin.dart';
@@ -61,7 +61,7 @@ class PluginManager extends ServerStoreDataPlugin with PluginCommon {
             category: PluginCategory.values[pluginModel.category],
             path: pluginModel.path,
             name: pluginModel.name,
-          ) as Plugin;
+          );
           break;
         case PluginType.Integration:
           // 处理 Integration 类型

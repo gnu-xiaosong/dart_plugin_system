@@ -2,9 +2,9 @@
 插件注入点管理
  */
 
-import 'package:dart_plugin_system/pluginSystem/PluginType.dart';
-import 'package:dart_plugin_system/pluginSystem/pluginInsert/PluginCategory.dart';
-import 'package:dart_plugin_system/pluginSystem/pluginInsertPointsClass/FunctionalityModulePluginInsertPoint.dart';
+import '../PluginType.dart';
+import '../pluginInsertPointsClass/FunctionalityModulePluginInsertPoint.dart';
+import 'PluginCategory.dart';
 
 class PluginInsertPointManager {
   // 运行插件类型: 默认类型Functionality

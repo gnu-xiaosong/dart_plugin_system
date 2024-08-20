@@ -2,9 +2,9 @@
 插件类:抽象类接口
  */
 
-import 'package:dart_plugin_system/pluginSystem/storeData/PluginModel.dart';
 import 'PluginType.dart';
 import 'pluginInsert/PluginCategory.dart';
+import 'storeData/PluginModel.dart';
 
 // 插件分类类别
 class Plugin {

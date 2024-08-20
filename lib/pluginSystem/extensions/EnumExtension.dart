@@ -2,8 +2,7 @@
 枚举的拓展
  */
 
-import 'package:dart_plugin_system/pluginSystem/PluginType.dart';
-
+import '../PluginType.dart';
 import '../pluginInsert/PluginCategory.dart';
 
 /*
